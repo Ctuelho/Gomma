@@ -4,66 +4,85 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class Intro : MonoBehaviour
+namespace Gomma
 {
-    [SerializeField] private string[] _lore;
-    [SerializeField] private Text _loreText;
-
-    [SerializeField] List<GameObject> _objectsToHide;
-    [SerializeField] List<GameObject> _objectsToShow;
-
-    private int _currentLore;
-
-    private Coroutine _adavanceDelay;
-
-    private bool _allowControls = false;
-
-    private void Update()
+    public class Intro : MonoBehaviour
     {
-        if (!_allowControls)
-            return;
+        [SerializeField] private string[] _lore;
+        [SerializeField] private Text _loreText;
 
-        if(Input.GetKeyDown(KeyCode.Return))
+        [SerializeField] List<GameObject> _objectsToHide;
+        [SerializeField] List<GameObject> _objectsToShow;
+
+        private int _currentLore;
+
+        private Coroutine _adavanceDelay;
+
+        private bool _allowControls = false;
+
+        private void Awake()
         {
-            SceneManager.LoadScene(1);
+            FadeManager.Instance.FadeIn(1);
         }
-        else if (Input.GetKeyDown(KeyCode.Space))
+
+        private void Update()
+        {
+            if (!_allowControls)
+                return;
+
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                FadeManager.Instance.FadeOutComplete += LoadLevel;
+                FadeManager.Instance.FadeOut(1);
+                _allowControls = false;
+            }
+            else if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (_adavanceDelay != null)
+                    StopCoroutine(_adavanceDelay);
+                _adavanceDelay = StartCoroutine(AdvanceDelay());
+
+                _currentLore++;
+                if (_currentLore > _lore.Length - 1)
+                {
+                    FadeManager.Instance.FadeOutComplete += LoadLevel;
+                    FadeManager.Instance.FadeOut(1);
+                    _allowControls = false;
+                }
+                else
+                {
+                    _loreText.text = _lore[_currentLore];
+                }
+            }
+        }
+
+        private void LoadLevel()
+        {
+            FadeManager.Instance.FadeOutComplete -= LoadLevel;
+            SceneManager.LoadScene(1);
+            FadeManager.Instance.FadeIn();
+        }
+
+        public void ClickStart()
         {
             if (_adavanceDelay != null)
                 StopCoroutine(_adavanceDelay);
             _adavanceDelay = StartCoroutine(AdvanceDelay());
 
-            _currentLore++;
-            if (_currentLore >_lore.Length - 1)
-            {
-                SceneManager.LoadScene(1);
-            }
-            else
-            {
-                _loreText.text = _lore[_currentLore];
-            }
+            _objectsToHide.ForEach(o => o.SetActive(false));
+            _objectsToShow.ForEach(o => o.SetActive(true));
         }
-    }
 
-    public void ClickStart()
-    {
-        if (_adavanceDelay != null)
-            StopCoroutine(_adavanceDelay);
-        _adavanceDelay = StartCoroutine(AdvanceDelay());
+        IEnumerator AdvanceDelay()
+        {
+            _allowControls = false;
+            yield return new WaitForSeconds(0.5f);
+            _allowControls = true;
+        }
 
-        _objectsToHide.ForEach(o => o.SetActive(false));
-        _objectsToShow.ForEach(o => o.SetActive(true));
-    }
-
-    IEnumerator AdvanceDelay()
-    {
-        _allowControls = false;
-        yield return new WaitForSeconds(0.5f);
-        _allowControls = true;
-    }
-
-    public void ClickQuit()
-    {
-        Application.Quit();
+        public void ClickQuit()
+        {
+            Application.Quit();
+        }
     }
 }

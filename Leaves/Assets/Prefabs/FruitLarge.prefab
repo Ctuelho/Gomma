@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 6917680119423617918}
   - component: {fileID: 6917680119423617916}
   - component: {fileID: 6917680119423617915}
-  - component: {fileID: 5566781689248504685}
   - component: {fileID: 4761631663708948178}
   m_Layer: 8
   m_Name: FruitLarge
@@ -124,25 +123,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.1, y: 0.09}
   m_Direction: 0
---- !u!114 &5566781689248504685
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6917680119423617904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2da13b076c9adf84b94b72e594de22e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ItemType: 6
-  MustBeCarryingToInteract: 
-  ConsumesCarriedItem: 0
-  Action: Carry
-  Rigidbody: {fileID: 6917680119423617916}
-  Colliders:
-  - {fileID: 6917680119423617915}
 --- !u!114 &4761631663708948178
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4816,7 +4816,6 @@ GameObject:
   - component: {fileID: 7156558716054943351}
   - component: {fileID: 7156558716054943349}
   - component: {fileID: 7156558716054943346}
-  - component: {fileID: 5625157722537633380}
   - component: {fileID: 8665282310038483024}
   m_Layer: 8
   m_Name: FruitAverage
@@ -4928,25 +4927,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.1, y: 0.09}
   m_Direction: 0
---- !u!114 &5625157722537633380
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7156558716054943353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2da13b076c9adf84b94b72e594de22e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ItemType: 5
-  MustBeCarryingToInteract: 
-  ConsumesCarriedItem: 0
-  Action: Carry
-  Rigidbody: {fileID: 7156558716054943349}
-  Colliders:
-  - {fileID: 7156558716054943346}
 --- !u!114 &8665282310038483024
 MonoBehaviour:
   m_ObjectHideFlags: 0

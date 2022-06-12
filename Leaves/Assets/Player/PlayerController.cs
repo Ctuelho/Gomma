@@ -70,7 +70,7 @@ namespace Gomma
                 _lifeCounter -= 1;
                 if (_lamps != null && _lamps.Count > 0)
                 {
-                    _currentLife = Mathf.Clamp(_currentLife + 4, 0, _maxLife);
+                    _currentLife = Mathf.Clamp(_currentLife + 8, 0, _maxLife);
                 }
                 else
                 {
