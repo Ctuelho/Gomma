@@ -28,6 +28,7 @@ namespace Gomma
             //base.SetCanInteract(canInteract);
             CanInteract = canInteract;
             Working = CanInteract;
+            OnStateChanged(canInteract);
             if (CanInteract)
             {
                 _animator.SetInteger("State", 1);

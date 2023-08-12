@@ -9,6 +9,7 @@ namespace Gomma
         [SerializeField] [Range(0.01f, 100f)] private float _walkSpeed = 0.1f;
         [SerializeField] private Transform _butt;
         [SerializeField] private Animator _animator;
+        [SerializeField] private AudioSource _crunch;
 
         private int _state = 0;
         private ItemTypes _lastFruitEaten;
@@ -69,6 +70,11 @@ namespace Gomma
                 interactable.SetCanInteract(false);
                 Destroy(interactable.gameObject);
             }
+        }
+
+        public void PlayCrunch()
+        {
+            _crunch.Play();
         }
 
         private void OnTriggerEnter2D(Collider2D collider)

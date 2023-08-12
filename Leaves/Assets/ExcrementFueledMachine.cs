@@ -10,6 +10,7 @@ namespace Gomma
         [SerializeField] private ParticleSystem _visualEffect;
         [SerializeField] private Interactable _targetInteractable;
         [SerializeField] private Transform _excrementPlace;
+        [SerializeField] private AudioSource _sfx;
 
         private GameObject _excrement;
 
@@ -24,8 +25,7 @@ namespace Gomma
         }
 
         private void Update()
-        {
-            
+        {         
             if(_isOn)
             {
                 _counter += Time.deltaTime;
@@ -39,11 +39,13 @@ namespace Gomma
                 if (_energy == 0)
                 {
                     _isOn = false;
+                    OnStateChanged(false);
                     _targetInteractable.SetCanInteract(false);
                     SetCanInteract(true);
                     _animator.SetInteger("State", 0);
                     _visualEffect.Stop();
                     Destroy(_excrement);
+                    _sfx.Stop();
                 }
             }
         }
@@ -65,6 +67,8 @@ namespace Gomma
                 _targetInteractable.SetCanInteract(true);
                 SetCanInteract(false);
                 _isOn = true;
+                OnStateChanged(true);
+                _sfx.Play();
                 _animator.SetInteger("State", 1);
                 _visualEffect.Play();
                 var excrement = PlayerController.CarriedItem;

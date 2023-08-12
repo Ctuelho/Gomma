@@ -16,13 +16,17 @@ namespace Gomma
         [SerializeField] [Range(0.1f, 100f)] float _jumpForce = 10f;
         [SerializeField] [Range(0f, 1f)] float _jumpSpeedReduction = 0.5f;
 
-        [SerializeField] private GroundChecker _groundChecker;
+        //[SerializeField] private GroundChecker _groundChecker;
+        [SerializeField] private GroundedCheckerBox _groundChecker;
         [SerializeField] private GameObject _hand;
 
         [SerializeField] private Animator _lifeBarAnimator;
         [SerializeField] private Image _lifeBarFill;
         [SerializeField] private Animator _airBarAnimator;
         [SerializeField] private Image _airBarFill;
+
+        [SerializeField] private AudioSource _jump;
+        [SerializeField] private AudioSource _step;
 
         private Rigidbody2D _rigidbody;
         private Animator _animator;
@@ -45,6 +49,24 @@ namespace Gomma
             _negativeGravity = 0;
         }
 
+        private void OnGroundedChanged(bool grounded)
+        {
+            if (grounded)
+            {
+                _jumping = false;
+            }
+        }
+
+        private void OnEnable()
+        {
+            _groundChecker.GroundedStateChanged += OnGroundedChanged;
+        }
+
+        private void OnDisable()
+        {
+            _groundChecker.GroundedStateChanged -= OnGroundedChanged;
+        }
+
         private void Update()
         {
             if (Input.GetKey(KeyCode.E) && _canInteract)
@@ -52,13 +74,9 @@ namespace Gomma
                 Interact();
             }
 
-            if (Input.GetKey(KeyCode.Space) && _groundChecker.Grounded)
+            if (!_jumping && Input.GetKeyDown(KeyCode.Space) && _groundChecker.Grounded)
             {
                 _jumping = true;
-            }
-            else
-            {
-                _jumping = false;
             }
 
             if (HighlightedItem == null)
@@ -70,32 +88,34 @@ namespace Gomma
                 _lifeCounter -= 1;
                 if (_lamps != null && _lamps.Count > 0)
                 {
-                    _currentLife = Mathf.Clamp(_currentLife + 8, 0, _maxLife);
+                    _currentLife = Mathf.Clamp(_currentLife + 5, 0, _maxLife);
+                    _lifeBarAnimator.SetTrigger("Increase");
                 }
                 else
                 {
                     _currentLife = Mathf.Clamp(_currentLife - 1, 0, _maxLife);
+                    _lifeBarAnimator.SetTrigger("Decrease");
                 }
 
                 _lifeBarFill.fillAmount = (float)_currentLife / (float)_maxLife;
-                if(_lifeBarFill.fillAmount <= 0.35f)
-                {
-                    _lifeBarAnimator.SetInteger("State", 1);
-                }
-                else
-                {
-                    _lifeBarAnimator.SetInteger("State", 0);
-                }
+                //if(_lifeBarFill.fillAmount <= 0.35f)
+                //{
+                //    _lifeBarAnimator.SetInteger("State", 1);
+                //}
+                //else
+                //{
+                //    _lifeBarAnimator.SetInteger("State", 0);
+                //}
 
                 if(_currentLife <= 0)
                 {
-                    EndMenu.Instance.Show("You passed out of hypothermia, but the rescue team saved you.", false);
+                    EndMenu.Instance.Show("You passed out of hypothermia. Remember to warm up with the heat lamp.", false);
                     return;
                 }
 
                 if (_currentAir <= 0)
                 {
-                    EndMenu.Instance.Show("You passed out of dyspnea, but the rescue team saved you.", false);
+                    EndMenu.Instance.Show("You passed out of dyspnea. Remember to keep to air cleaner fan on.", false);
                     return;
                 }
 
@@ -103,21 +123,23 @@ namespace Gomma
                 if (Fan.Working)
                 {
                     _currentAir = Mathf.Clamp(_currentAir + 1, 0, _maxLife);
+                    _airBarAnimator.SetTrigger("Increase");
                 }
                 else
                 {
                     _currentAir = Mathf.Clamp(_currentAir - 1, 0, _maxLife);
+                    _airBarAnimator.SetTrigger("Decrease");
                 }
 
                 _airBarFill.fillAmount = (float)_currentAir / (float)_maxLife;
-                if (_airBarFill.fillAmount <= 0.35f)
-                {
-                    _airBarAnimator.SetInteger("State", 1);
-                }
-                else
-                {
-                    _airBarAnimator.SetInteger("State", 0);
-                }
+                //if (_airBarFill.fillAmount <= 0.35f)
+                //{
+                //    _airBarAnimator.SetInteger("State", 1);
+                //}
+                //else
+                //{
+                //    _airBarAnimator.SetInteger("State", 0);
+                //}
             }
         }
 
@@ -132,6 +154,18 @@ namespace Gomma
             else if (input.x > 0)
                 transform.localScale = new Vector3(_originalScaleX, transform.localScale.y, transform.localScale.z);
 
+
+            if (_jumping)
+            {
+                _jumping = false;
+                _rigidbody.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
+            }
+            else
+            {
+                _rigidbody.velocity =
+                    new Vector2(input.x * _walkSpeed * (_groundChecker.Grounded ? 1f : 1f - _jumpSpeedReduction), _rigidbody.velocity.y);
+            }
+
             //if (Input.GetKey(KeyCode.Space) && _groundChecker.Grounded)
             //{
             //    _rigidbody.velocity = new Vector2(input.x * _walkSpeed, _jumpForce);
@@ -141,16 +175,16 @@ namespace Gomma
             //    _rigidbody.velocity = new Vector2(input.x * _walkSpeed, _rigidbody.velocity.y);
             //}
 
-            if (_jumping)
-            {
-                _rigidbody.velocity = 
-                    new Vector2(input.x * _walkSpeed * (_groundChecker.Grounded ? 1f : 1f - _jumpSpeedReduction), _jumpForce);
-            }
-            else
-            {
-                _rigidbody.velocity = 
-                    new Vector2(input.x * _walkSpeed * (_groundChecker.Grounded ? 1f : 1f - _jumpSpeedReduction), _rigidbody.velocity.y);
-            }
+            //if (_jumping)
+            //{
+            //    _rigidbody.velocity = 
+            //        new Vector2(input.x * _walkSpeed * (_groundChecker.Grounded ? 1f : 1f - _jumpSpeedReduction), _jumpForce);
+            //}
+            //else
+            //{
+            //    _rigidbody.velocity = 
+            //        new Vector2(input.x * _walkSpeed * (_groundChecker.Grounded ? 1f : 1f - _jumpSpeedReduction), _rigidbody.velocity.y);
+            //}
 
             if (_negativeGravity != 0)
             {
@@ -158,7 +192,7 @@ namespace Gomma
             }
 
 
-                if (_groundChecker.Grounded)
+            if (_groundChecker.Grounded && !_jumping)
             {
                 if (input.x != 0)
                     SetState(PlayerStates.WALKING);
@@ -285,5 +319,15 @@ namespace Gomma
             Instance._negativeGravity = negativeGravity;
         }
         #endregion interactables
+
+        public void PlayJump()
+        {
+            _jump.Play();
+        }
+
+        public void PlayStep()
+        {
+            _step.Play();
+        }
     }
 }

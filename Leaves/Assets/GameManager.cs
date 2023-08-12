@@ -26,7 +26,7 @@ namespace Gomma
 
         private void UpdateScores()
         {
-            _energyFarmed.text = "Farmed: " + _currentEnergyFarmed.ToString();
+            _energyFarmed.text = "Collected: " + _currentEnergyFarmed.ToString();
             _energyUsed.text = "Used: " + _currentEnergyUsed.ToString();
         }
 

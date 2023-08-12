@@ -8,6 +8,9 @@ namespace Gomma
 
     public class Interactable : MonoBehaviour
     {
+        public delegate void OnStateChangedEvent(bool state);
+        public OnStateChangedEvent StateChanged;
+
         public ItemTypes ItemType = ItemTypes.NONE;
         public List<ItemTypes> MustBeCarryingToInteract;
         public bool ConsumesCarriedItem = true;
@@ -21,6 +24,11 @@ namespace Gomma
         private void Awake()
         {
             _originalScale = transform.localScale;
+        }
+
+        public virtual void OnStateChanged(bool state)
+        {
+            StateChanged?.Invoke(state);
         }
 
         public virtual void SetCanInteract(bool canInteract)

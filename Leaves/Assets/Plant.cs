@@ -16,6 +16,8 @@ namespace Gomma
         [SerializeField] private GameObject _fruitPosition;
         [SerializeField] private List<GameObject> _treeStages;
         [SerializeField] private ParticleSystem _nourishedEffect;
+        [SerializeField] private AudioSource _fertilize;
+        [SerializeField] private AudioSource _fruitfy;
 
         private PlantStates _state = PlantStates.SPROUT;
         private int _energy = 0;
@@ -52,7 +54,7 @@ namespace Gomma
         {
             _sustenanceNeeded = Random.Range(GameManager.PlantStatistics.MinSustenancePerStage, GameManager.PlantStatistics.MaxSustenancePerStage + 1);
             _energy = 0;
-            SetNourished(false);
+            //SetNourished(false);
 
             if (_state == PlantStates.SPROUT)
             {
@@ -100,30 +102,33 @@ namespace Gomma
             _state = state;
 
             _treeStages.ForEach(t => t.gameObject.SetActive(false));
-            SetNourished(false);
+            //SetNourished(false);
             Action = "Fertilize";
             MustBeCarryingToInteract = new List<ItemTypes> { ItemTypes.GEL };
             switch (_state)
             {
                 case PlantStates.SPROUT:
                     SetCanInteract(true);
-                    _sustenanceNeeded = Random.Range(GameManager.PlantStatistics.MinSustenancePerStage, GameManager.PlantStatistics.MaxSustenancePerStage + 1);
-                    SetNourished(false);
+                    _sustenanceNeeded = Random.Range(GameManager.PlantStatistics.MinSustenancePerStage, GameManager.PlantStatistics.MaxSustenancePerStage + 1);                 
                     _treeStages[0].gameObject.SetActive(true);
+                    SetNourished(false);
                     break;
                 case PlantStates.GROWING:
-                    SetCanInteract(true);
+                    //SetCanInteract(true);
                     _treeStages[1].gameObject.SetActive(true);
+                    SetNourished(true);
                     break;
                 case PlantStates.FLOWERING:
-                    SetCanInteract(true);
+                    //SetCanInteract(true);
                     _treeStages[2].gameObject.SetActive(true);
+                    SetNourished(true);
                     break;
                 case PlantStates.FRUITING:
                     SetCanInteract(true);
                     _treeStages[3].gameObject.SetActive(true);
                     Action = "Harvest";
                     MustBeCarryingToInteract = null;
+                    SetNourished(false);
                     //spawn fruit
                     var fruitObject = Instantiate(GameManager.PlantStatistics.GetRandomFruit());
                     _fruit = fruitObject.GetComponent<Interactable>();
@@ -162,9 +167,11 @@ namespace Gomma
                         SetNourished(true);
                         PlayerController.CarriedItem.Drop();
                         PlayerController.DownlightItem();
+                        _fertilize.Play();
                         break;
                     case PlantStates.FRUITING:
                         _treeStages[3].gameObject.SetActive(true);
+                        _fruitfy.Play();
                         //drop fruit
                         _fruit.transform.SetParent(null);
                         _fruit.SetCanInteract(true);

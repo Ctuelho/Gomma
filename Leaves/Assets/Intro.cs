@@ -14,7 +14,7 @@ namespace Gomma
         [SerializeField] List<GameObject> _objectsToHide;
         [SerializeField] List<GameObject> _objectsToShow;
 
-        private int _currentLore;
+        private int _currentLore = -1;
 
         private Coroutine _adavanceDelay;
 
@@ -23,6 +23,10 @@ namespace Gomma
         private void Awake()
         {
             FadeManager.Instance.FadeIn(1);
+            _currentLore = -1;
+            if (_adavanceDelay != null)
+                StopCoroutine(_adavanceDelay);
+            _adavanceDelay = StartCoroutine(AdvanceDelay());
         }
 
         private void Update()
@@ -36,8 +40,14 @@ namespace Gomma
                 FadeManager.Instance.FadeOut(1);
                 _allowControls = false;
             }
-            else if (Input.GetKeyDown(KeyCode.Space))
+            else if (Input.anyKey)
             {
+                if(_currentLore == -1)
+                {
+                    ClickStart();
+                    return;
+                }
+
                 if (_adavanceDelay != null)
                     StopCoroutine(_adavanceDelay);
                 _adavanceDelay = StartCoroutine(AdvanceDelay());
@@ -71,6 +81,7 @@ namespace Gomma
 
             _objectsToHide.ForEach(o => o.SetActive(false));
             _objectsToShow.ForEach(o => o.SetActive(true));
+            _currentLore = 0;
         }
 
         IEnumerator AdvanceDelay()

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a0563c634ecf854985509e812b88735, type: 3}
+  m_Name: PlantsStatistics 2
+  m_EditorClassIdentifier: 
+  _minNourishmentPerFertilization: 60
+  _maxNourishmentPerFertilization: 90
+  _minSustenancePerStage: 5
+  _maxSustenancePerStage: 10
+  _smallFruitPrefab: {fileID: 8587024321415424005, guid: 514feeb72db4da448a9654bf2d3cde50, type: 3}
+  _averageFruitPrefab: {fileID: 7156558716054943353, guid: 927458e892a372e448fa7ef4119e1418, type: 3}
+  _largeFruitPrefab: {fileID: 6917680119423617904, guid: f8219879bcc835a49bd68dda6ec378cd, type: 3}
